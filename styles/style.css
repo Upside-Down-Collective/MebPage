@@ -1,0 +1,147 @@
+:root {
+  --color-background: #262730;
+  --color-text-primary: #f2f2cf;
+  --color-text-secondary: #a6fbff;
+  --color-neutral: #000;
+  --color-link: #59bfff;
+  --color-neutral: #383e42;
+
+  /* --color-background: #fff8eb;
+  --color-text-primary: #02040f;
+  --color-text-secondary: #6c375f;
+  --color-link: #0069da;
+  --color-neutral: #dad2c2; */
+
+  --width: 1440px;
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 1rem;
+  font-family: "Nunito", sans-serif;
+  padding: 0 1rem;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+.wrap {
+  max-width: var(--width);
+  margin: 0 auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  width: fit-content;
+}
+
+h1 {
+  font-size: 4rem;
+  margin: 2.5rem 0;
+  border-bottom: 1px solid var(--color-link);
+}
+
+h2 {
+  font-size: 2.2rem;
+  margin: 2.5rem 0;
+  border-bottom: 1px solid var(--color-link);
+}
+
+h3 {
+  font-size: 2rem;
+  margin: 2rem 0;
+}
+
+h4 {
+  font-size: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+h5 {
+  font-size: 1.125rem;
+  margin: 1.25rem 0;
+}
+
+h6 {
+  font-size: 1rem;
+  margin: 1rem 0;
+}
+
+p {
+  margin: 1rem 0;
+}
+
+hr {
+  height: 1px;
+  background-color: var(--color-link);
+  border: none;
+  margin: 1rem 0;
+}
+
+a {
+  color: var(--color-link);
+}
+
+ul,
+ol {
+  padding-left: 2.5rem;
+}
+
+code,
+pre {
+  color: var(--color-text-secondary);
+  border-radius: 10px;
+  background-color: var(--color-neutral);
+}
+
+code {
+  padding: 0.4rem;
+}
+
+pre {
+  width: fit-content;
+  padding: 1rem;
+  margin: 2rem 0;
+}
+
+.italic {
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+.bold {
+  font-weight: 800;
+  color: var(--color-text-secondary);
+}
+
+.strikethrough {
+  text-decoration: line-through;
+  color: var(--color-text-secondary);
+}
+
+blockquote {
+  position: relative;
+  padding: 0.5rem 0 0.5rem 2rem;
+}
+
+blockquote::before {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 100%;
+  background-color: var(--color-text-secondary);
+  position: absolute;
+  left: 0;
+  top: 0;
+}
