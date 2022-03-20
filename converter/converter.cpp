@@ -10,6 +10,8 @@ string tag_recognition(string checked_line) {
     regex link("\\[(.*)\\]\\((.*)\\)");
     regex ordered_list("[0-9]+.(.*)");
     regex unordered_list("-(.*)|\\*(.*)|\\+(.*)");
+    regex pre_opening("```opening");
+    regex pre_closing("```");
 
     for(int i=0; i<checked_line.length(); i++) {
         if(checked_line[i]=='#') same_character_counter++;
@@ -24,6 +26,8 @@ string tag_recognition(string checked_line) {
             else if(regex_match(checked_line, link)) return("Link");
             else if(regex_match(checked_line, ordered_list)) return("Ordered list");
             else if(regex_match(checked_line, unordered_list)) return("Unordered list");
+            else if(regex_match(checked_line, pre_opening)) return("Opening pre");
+            else if(regex_match(checked_line, pre_closing)) return("Closing pre");
     else return("Unknown/Error");
 }
 
