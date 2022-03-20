@@ -8,6 +8,8 @@ using namespace std;
 string tag_recognition(string checked_line) {
     int same_character_counter=0;
     regex link("\\[(.*)\\]\\((.*)\\)");
+    regex ordered_list("[0-9]+.(.*)");
+    regex unordered_list("-(.*)|\\*(.*)|\\+(.*)");
 
     for(int i=0; i<checked_line.length(); i++) {
         if(checked_line[i]=='#') same_character_counter++;
@@ -20,6 +22,8 @@ string tag_recognition(string checked_line) {
             else if(same_character_counter==5) return("H5");
             else if(same_character_counter==6) return("H6");
             else if(regex_match(checked_line, link)) return("Link");
+            else if(regex_match(checked_line, ordered_list)) return("Ordered list");
+            else if(regex_match(checked_line, unordered_list)) return("Unordered list");
     else return("Unknown/Error");
 }
 
