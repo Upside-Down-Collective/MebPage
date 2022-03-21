@@ -32,16 +32,25 @@ string tag_recognition(string checked_line) {
 }
 
 int main() {
-    ifstream markdown, html;
-    string checked_line;
+    fstream markdown, html;
+    string checked_line, current_tag, text;
 
     markdown.open("index.md");
     html.open("index.html");
     
     while(!markdown.eof()) {
         getline(markdown, checked_line);
+        current_tag = tag_recognition(checked_line);
 
-        cout << tag_recognition(checked_line) << endl;
+        if(current_tag=="H1") {
+            for(int i=2; i<checked_line.length(); i++) {
+                text+=checked_line[i];
+            }
+
+            html << "<h1> " << text << " </h1>";
+        }
+
+        text = "";
     }
     
     return(0);
