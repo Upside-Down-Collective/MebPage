@@ -5,6 +5,29 @@
 
 using namespace std;
 
+// string to_italic(string s){
+//     regex italic("(.*)\\*(.*)\\*(.*)");
+//     s.find('str');
+// }
+
+string to_italic(string text) {
+    int start = text.find("*");
+    string first = text.substr(0, start);
+    string second = text.substr(start);
+    int end = second.find("*", 1);
+    string italic = second.substr(1, end-1);
+    string last = second.substr(end+1);
+
+    return(first + " <span class=\"italic\"> " + italic + " </span> " + last);
+}
+
+string to_h1(string checked_line) {
+    string text = checked_line.substr(2);
+    string italic = to_italic(text);
+
+    return("<h1> " + italic + " </h1>");
+}
+
 string tag_recognition(string checked_line) {
     int same_character_counter=0;
     regex link("\\[(.*)\\]\\((.*)\\)");
@@ -12,12 +35,15 @@ string tag_recognition(string checked_line) {
     regex unordered_list("-(.*)|\\*(.*)|\\+(.*)");
     regex pre_opening("```opening");
     regex pre_closing("```");
+    regex italic("(.*)\\*(.*)\\*(.*)");
+    string result;
 
     for(int i=0; i<checked_line.length(); i++) {
         if(checked_line[i]=='#') same_character_counter++;
     }
 
-    if(same_character_counter==1) return("H1");
+    if(same_character_counter==1) return to_h1(checked_line);
+            // else if(regex_match(checked_line, italic)) tags+="italic ";
             else if(same_character_counter==2) return("H2");
             else if(same_character_counter==3) return("H3");
             else if(same_character_counter==4) return("H4");
@@ -29,6 +55,7 @@ string tag_recognition(string checked_line) {
             else if(regex_match(checked_line, pre_opening)) return("Opening pre");
             else if(regex_match(checked_line, pre_closing)) return("Closing pre");
     else return("Unknown/Error");
+    return "";
 }
 
 int main() {
@@ -41,15 +68,7 @@ int main() {
     while(!markdown.eof()) {
         getline(markdown, checked_line);
         current_tag = tag_recognition(checked_line);
-
-        if(current_tag=="H1") {
-            for(int i=2; i<checked_line.length(); i++) {
-                text+=checked_line[i];
-            }
-
-            html << "<h1> " << text << " </h1>";
-        }
-
+        cout<<current_tag<<endl;
         text = "";
     }
     
