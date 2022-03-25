@@ -11,21 +11,33 @@ using namespace std;
 // }
 
 string to_italic(string text) {
-    int start = text.find("*");
-    string first = text.substr(0, start);
-    string second = text.substr(start);
-    int end = second.find("*", 1);
-    string italic = second.substr(1, end-1);
-    string last = second.substr(end+1);
+    regex italic_regex("(.*)\\*(.*)\\*(.*)");
 
-    return(first + " <span class=\"italic\"> " + italic + " </span> " + last);
+    int start_index = text.find("*");
+    string first = text.substr(0, start_index);
+    string italic_with_last = text.substr(start_index);
+    int end_index = italic_with_last.find("*", 1);
+    string italic = italic_with_last.substr(1, end_index-1);
+    string last = italic_with_last.substr(end_index+1);
+
+    string converted = first + "<span class=\"italic\">" + italic + "</span>" + last;
+
+    if(regex_match(converted, italic_regex)) return(to_italic(converted));
+
+    return(converted);
 }
 
 string to_h1(string checked_line) {
-    string text = checked_line.substr(2);
-    string italic = to_italic(text);
+    regex italic_regex("(.*)\\*(.*)\\*(.*)");
 
-    return("<h1> " + italic + " </h1>");
+    string text = checked_line.substr(2);
+    string italic = text;
+
+    if(regex_match(checked_line, italic_regex)){
+      italic = to_italic(text);  
+    } 
+
+    return("<h1>" + italic + "</h1>");
 }
 
 string tag_recognition(string checked_line) {
