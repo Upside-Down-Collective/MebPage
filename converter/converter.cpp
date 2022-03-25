@@ -5,13 +5,8 @@
 
 using namespace std;
 
-// string to_italic(string s){
-//     regex italic("(.*)\\*(.*)\\*(.*)");
-//     s.find('str');
-// }
-
 string to_italic(string text) {
-    regex italic_regex("(.*)\\*(.*)\\*(.*)");
+    regex italic_regex("(.*)\\*(.*)\\*(.*)"); //regex italic_regex("(.*)\\*(.*)\\*(.*)|(.*)_(.*)_(.*)");
 
     int start_index = text.find("*");
     string first = text.substr(0, start_index);
@@ -40,9 +35,38 @@ string to_h1(string checked_line) {
     return("<h1>" + italic + "</h1>");
 }
 
+string to_link(string checked_line){
+    regex link_text_regex("\\[(.*)\\]");
+    regex link_regex("\\((.*)\\)");
+    regex line_start_regex("(.*)\\[");
+    regex line_end_regex("\\)(.*)");
+
+    string line_start = "";
+    string line_end = "";
+
+
+    smatch match;
+
+    regex_search(checked_line, match, link_text_regex);
+    string link_text = match.str(1); 
+
+    regex_search(checked_line, match, link_regex);
+    string link = match.str(1);
+
+    if (regex_search(checked_line, match, line_start_regex) == true) {
+        line_start = match.str(1);
+    }
+
+    if (regex_search(checked_line, match, line_end_regex) == true) {
+        line_end = match.str(1);
+    }
+    
+    return(line_start + "<a href=\"" + link + "\" target=\"!blank\">" + link_text + "</a>" + line_end);
+}
+
 string tag_recognition(string checked_line) {
     int same_character_counter=0;
-    regex link("\\[(.*)\\]\\((.*)\\)");
+    regex link("(.*)\\[(.*)\\]\\((.*)\\)(.*)");
     regex ordered_list("[0-9]+.(.*)");
     regex unordered_list("-(.*)|\\*(.*)|\\+(.*)");
     regex pre_opening("```opening");
@@ -61,7 +85,7 @@ string tag_recognition(string checked_line) {
             else if(same_character_counter==4) return("H4");
             else if(same_character_counter==5) return("H5");
             else if(same_character_counter==6) return("H6");
-            else if(regex_match(checked_line, link)) return("Link");
+            else if(regex_match(checked_line, link)) return to_link(checked_line);
             else if(regex_match(checked_line, ordered_list)) return("Ordered list");
             else if(regex_match(checked_line, unordered_list)) return("Unordered list");
             else if(regex_match(checked_line, pre_opening)) return("Opening pre");
