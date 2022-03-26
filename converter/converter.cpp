@@ -36,19 +36,19 @@ string to_h1(string checked_line) {
 }
 
 string to_link(string checked_line){
-    regex link_text_regex("\\[(.*)\\]");
-    regex link_regex("\\((.*)\\)");
-    regex line_start_regex("(.*)\\[");
+    regex link_text_regex("\\[(.*?)\\]");
+    regex link_regex("\\((.*?)\\)");
+    regex line_start_regex("(.*?)\\[");
     regex line_end_regex("\\)(.*)");
+    regex full_link_regex("(.*)\\[(.*)\\]\\((.*)\\)(.*)");
 
     string line_start = "";
     string line_end = "";
 
-
     smatch match;
 
     regex_search(checked_line, match, link_text_regex);
-    string link_text = match.str(1); 
+    string link_text = match.str(1);
 
     regex_search(checked_line, match, link_regex);
     string link = match.str(1);
@@ -61,7 +61,11 @@ string to_link(string checked_line){
         line_end = match.str(1);
     }
     
-    return(line_start + "<a href=\"" + link + "\" target=\"!blank\">" + link_text + "</a>" + line_end);
+    string converted = line_start + "<a href=\"" + link + "\" target=\"!blank\">" + link_text + "</a>" + line_end;
+
+    if(regex_match(converted, full_link_regex)) return(to_link(converted));
+
+    return(converted);
 }
 
 string tag_recognition(string checked_line) {
