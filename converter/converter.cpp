@@ -117,11 +117,33 @@ string to_ordered_list(string checked_line) {
 
     string text = checked_line.substr(number.length()+1);
 
+    if(regex_match(checked_line, bold_regex)) {
+        text = to_bold(text);
+    }
+    if(regex_match(checked_line, italic_regex)){
+      text = to_italic(text);
+    }
+
+    if(regex_match(checked_line, full_link_regex)) {
+        text = to_link(text);
+    }
+
     return("<li>" + text + "</li>");
 }
 
 string to_unordered_list(string checked_line) {
     string text = checked_line.substr(2);
+
+    if(regex_match(checked_line, bold_regex)) {
+        text = to_bold(text);
+    }
+    if(regex_match(checked_line, italic_regex)){
+      text = to_italic(text);
+    }
+
+    if(regex_match(checked_line, full_link_regex)) {
+        text = to_link(text);
+    }
 
     return("<li>" + text + "</li>");
 }
