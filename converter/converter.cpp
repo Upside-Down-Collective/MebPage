@@ -8,9 +8,13 @@ using namespace std;
 regex italic_regex("(.*)\\*(.*)\\*(.*)");
 regex bold_regex("(.*)\\*\\*(.*)\\*\\*(.*)");
 regex full_link_regex("(.*)\\[(.*)\\]\\((.*)\\)(.*)");
+regex ordered_list_regex("[0-9]+.(.*)");
+regex unordered_list_regex("-(.*)|\\*(.*)|\\+(.*)");
+regex pre_opening_regex("```(.*)"); 
+regex pre_closing_regex("```");
 
 string to_italic(string checked_line) {
-    regex full_italic_regex("(.*)\\*(.*)\\*(.*)"); //regex italic_regex("(.*)\\*(.*)\\*(.*)|(.*)_(.*)_(.*)");
+    regex full_italic_regex("(.*)\\*(.*)\\*(.*)");
     regex italic_regex("\\*(.*?)\\*");
     regex line_start_regex("(.*?)\\*");
     regex line_end_regex("\\*(.*)");
@@ -103,6 +107,25 @@ string to_link(string checked_line){
     return(converted);
 }
 
+string to_ordered_list(string checked_line) {
+    regex number_length("([0-9]+.)");
+
+    smatch match;
+
+    regex_search(checked_line, match, number_length);
+    string number = match.str(1);
+
+    string text = checked_line.substr(number.length()+1);
+
+    return("<li>" + text + "</li>");
+}
+
+string to_unordered_list(string checked_line) {
+    string text = checked_line.substr(2);
+
+    return("<li>" + text + "</li>");
+}
+
 string to_h(string checked_line, int n) {
     string text = checked_line.substr(n + 1);
 
@@ -125,15 +148,10 @@ string to_h(string checked_line, int n) {
     return("<h" + n_to_string + ">" + text + "</h" + n_to_string+ ">");
 }
 
-
-
 string tag_recognition(string checked_line) {
     int same_character_counter=0;
     regex link("(.*)\\[(.*)\\]\\((.*)\\)(.*)");
-    regex ordered_list("[0-9]+.(.*)");
-    regex unordered_list("-(.*)|\\*(.*)|\\+(.*)");
-    regex pre_opening("```opening");
-    regex pre_closing("```");
+
     regex italic("(.*)\\*(.*)\\*(.*)");
     regex bold("(.*)\\*\\*(.*)\\*\\*(.*)");
     string result;
@@ -150,10 +168,10 @@ string tag_recognition(string checked_line) {
             else if(same_character_counter==5) return to_h(checked_line, 5);
             else if(same_character_counter==6) return to_h(checked_line, 6);
             else if(regex_match(checked_line, link)) return to_link(checked_line);
-            else if(regex_match(checked_line, ordered_list)) return("Ordered list");
-            else if(regex_match(checked_line, unordered_list)) return("Unordered list");
-            else if(regex_match(checked_line, pre_opening)) return("Opening pre");
-            else if(regex_match(checked_line, pre_closing)) return("Closing pre");
+            else if(regex_match(checked_line, ordered_list_regex)) return to_ordered_list(checked_line);
+            else if(regex_match(checked_line, unordered_list_regex)) return to_unordered_list(checked_line);
+            else if(regex_match(checked_line, pre_opening_regex)) return("Opening pre");
+            else if(regex_match(checked_line, pre_closing_regex)) return("Closing pre");
     else return("Unknown/Error");
     return "";
 }
@@ -165,11 +183,40 @@ int main() {
     markdown.open("index.md");
     html.open("index.html");
     
+    bool ol_start = false;
+    bool ul_start = false;
     while(!markdown.eof()) {
         getline(markdown, checked_line);
         current_tag = tag_recognition(checked_line);
+
+        if(!ol_start && regex_match(checked_line, ordered_list_regex)){
+            ol_start = true;
+            cout<< "<ol>";
+        }
+        else if(ol_start && !regex_match(checked_line, ordered_list_regex)){
+            ol_start = false;
+            cout<< "</ol>";
+        }
+
+        if(!ul_start && regex_match(checked_line, unordered_list_regex)){
+            ul_start = true;
+            cout<< "<ul>";
+        }
+        else if(ul_start && !regex_match(checked_line, unordered_list_regex)){
+            ul_start = false;
+            cout<< "</ul>";
+        }
+            
         cout<<current_tag<<endl;
         text = "";
+    }
+
+    if(ol_start){
+        cout<<"</ol>";
+    }
+
+    if(ul_start) {
+        cout << "</ul>";
     }
     
     return(0);
