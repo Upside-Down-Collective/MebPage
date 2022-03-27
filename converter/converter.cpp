@@ -6,6 +6,7 @@
 using namespace std;
 
 regex italic_regex("(.*)\\*(.*)\\*(.*)");
+regex bold_regex("(.*)\\*\\*(.*)\\*\\*(.*)");
 regex full_link_regex("(.*)\\[(.*)\\]\\((.*)\\)(.*)");
 
 string to_italic(string checked_line) {
@@ -33,6 +34,39 @@ string to_italic(string checked_line) {
 
     string converted = line_start + "<span class=\"italic\">" + italic + "</span>" + line_end;
     if(regex_match(converted, full_italic_regex)) return(to_italic(converted));
+
+    return(converted);
+}
+
+string to_bold(string checked_line) {
+    regex bold_text_regex("\\*\\*(.*?)\\*\\*");
+    regex line_start_regex("(.*?)\\*\\*");
+    regex line_end_regex("\\*\\*(.*)");
+
+    string line_start = "";
+    string line_end = "";
+    cout<<"checked: "<<checked_line<<endl;
+
+    smatch match;
+
+    regex_search(checked_line, match, bold_text_regex);
+    string bold = match.str(1);
+
+    if (regex_search(checked_line, match, line_start_regex) == true) {
+        line_start = match.str(1);
+    }
+
+    if (regex_search(checked_line, match, line_end_regex) == true) {
+        line_end = match.str(1);
+        line_end = line_end.substr(bold.length()+2);
+    }
+
+    cout<<"bold text: "<<bold << endl;
+    cout<<"line start: "<<line_start<<endl;
+    cout<<"line end: "<<line_end<<endl;
+
+    string converted = line_start + "<span class=\"bold\">" + bold + "</span>" + line_end;
+    if(regex_match(converted, bold_regex)) return(to_bold(converted));
 
     return(converted);
 }
@@ -72,8 +106,11 @@ string to_link(string checked_line){
 string to_h(string checked_line, int n) {
     string text = checked_line.substr(n + 1);
 
+    if(regex_match(checked_line, bold_regex)) {
+        text = to_bold(text);
+    }
     if(regex_match(checked_line, italic_regex)){
-      text = to_italic(text);  
+      text = to_italic(text);
     }
 
     if(regex_match(checked_line, full_link_regex)) {
@@ -98,6 +135,7 @@ string tag_recognition(string checked_line) {
     regex pre_opening("```opening");
     regex pre_closing("```");
     regex italic("(.*)\\*(.*)\\*(.*)");
+    regex bold("(.*)\\*\\*(.*)\\*\\*(.*)");
     string result;
 
     for(int i=0; i<checked_line.length(); i++) {
